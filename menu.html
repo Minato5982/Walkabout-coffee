@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Menu | Walkabout Demo</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="container">
+    <a class="logo" href="index.html">Walkabout</a>
+    <nav>
+      <a href="menu.html" class="active">Menu</a>
+      <a href="about.html">About</a>
+      <a href="access.html">Access</a>
+      <a class="btn" href="contact.html">Reserve</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Menu</h1>
+
+    <!-- カテゴリ切り替え -->
+    <div class="tabs" id="menu-tabs">
+      <button data-cat="coffee" class="tab is-active">Coffee</button>
+      <button data-cat="Espresso" class="tab">Espresso</button>
+      <button data-cat="Tea&Others" class="tab">Tea&Others</button>
+      <button data-cat="food" class="tab">Food</button>
+      <button data-cat="sweets" class="tab">Sweets</button>
+    </div>
+
+    <!-- メニュー一覧が入る -->
+    <div id="menu-root" class="menu-grid"></div>
+  </main>
+
+  <footer class="container">
+    <small>© Walkabout Demo</small>
+  </footer>
+
+  <script src="assets/menu.js" defer></script>
+</body>
+</html>

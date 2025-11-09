@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Walkabout Coffee | Specialty Coffee from Kanda</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="image.png" />
+
+  <style>
+    :root{
+      --bg:#fff; --fg:#111; --muted:#555; --line:#e5e5e5;
+      --max:1200px; --pad:22px; --fade:360ms; --active:#f97316;
+      --accent:#0F766E;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:"Noto Serif JP",serif}
+    a{color:var(--fg);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+
+    /* Announcement */
+    .announce{background:var(--fg);color:#fff;font-size:12px;letter-spacing:.02em}
+    .announce .container{display:flex;justify-content:center;align-items:center;height:36px;text-align:center}
+
+    /* Header */
+    header{border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:10}
+    .nav{display:flex;align-items:center;gap:24px;height:68px}
+    .left-group{display:flex;align-items:center;gap:24px;min-width:0}
+    .logo{display:inline-flex;align-items:center;gap:10px}
+    .logo img{height:40px;width:auto;display:block}
+    .menu{display:flex;gap:18px;align-items:center}
+    .icons{margin-left:auto;display:flex;gap:14px;align-items:center}
+    .icon-btn{border:1px solid var(--line);padding:6px 10px;border-radius:999px;font-size:12px}
+
+    /* Hero */
+    .hero{padding:40px 0}
+    .hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:28px;align-items:center}
+    .eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
+    .hero h1{font-size:56px;line-height:1.03;margin:0 0 14px;white-space:normal}
+    .hero p{color:var(--muted);line-height:1.7;max-width:58ch;margin:0 0 18px}
+    .cta{display:inline-block;border:1.8px solid var(--fg);padding:12px 18px;border-radius:999px;font-weight:600}
+    .cta:hover{background:var(--fg);color:#fff;text-decoration:none}
+    .hero-media img{width:100%;height:auto;border-radius:8px;display:block;border:1px solid var(--line)}
+
+    /* Coffee info */
+    .coffee-info{margin:6px 0 22px;line-height:1.7;color:#333;font-size:.95rem}
+    .coffee-info .tasting{margin:0 0 8px;font-style:normal;color:#222}
+    .coffee-info .origin{list-style:none;margin:0;padding:0;display:grid;gap:3px}
+    .coffee-info .origin li strong{font-weight:600;color:#111}
+
+    /* Fade */
+    .fade-wrap{transition:opacity var(--fade) ease}
+    .fade-wrap.is-fading{opacity:0}
+
+    /* Dots */
+    .dots{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:16px}
+    .dot{appearance:none;background:transparent;border:2px solid #111;width:20px;height:20px;border-radius:50%;cursor:pointer;transition:transform .25s,box-shadow .25s,background .25s,border-color .25s}
+    .dot:hover{transform:scale(1.1);box-shadow:0 0 6px rgba(0,0,0,.2)}
+    .dot.is-active{background:var(--active);border-color:var(--active);box-shadow:0 0 10px rgba(249,115,22,.45);transform:scale(1.2)}
+    .dot:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+
+    /* ===== Featured (おすすめ) ===== */
+    .featured{padding:48px 0 12px}
+    .featured .section-title{font-size:34px;font-weight:700;letter-spacing:.02em;text-align:center;margin:0 0 18px;text-transform:uppercase}
+    .featured .sub{display:none}
+
+    /* 横スクロール（デフォはカルーセル） */
+    .prod-row{
+      display:grid;
+      grid-auto-flow:column;
+      grid-auto-columns:minmax(220px,280px);
+      gap:18px;
+      overflow-x:auto;
+      padding:6px var(--pad) 16px;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+    }
+    .prod-row::-webkit-scrollbar{height:8px}
+    .prod-row::-webkit-scrollbar-thumb{background:#ddd;border-radius:999px}
+
+    .prod-card{scroll-snap-align:start;border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden;display:flex;flex-direction:column}
+    .prod-card a{color:inherit;text-decoration:none}
+    .prod-media{aspect-ratio:1/1;background:#fafafa;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+    .prod-media img{width:100%;height:100%;object-fit:cover;display:block}
+    .prod-body{padding:14px;display:flex;flex-direction:column;gap:8px}
+    .prod-title{font-weight:700;font-size:16px;line-height:1.3}
+    .price{font-size:14px;color:#333}
+    .badge{font-size:11px;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:2px 8px;display:inline-block}
+    .prod-actions{margin-top:6px}
+    .prod-actions .btn{display:block;text-align:center;border:1px solid var(--fg);color:var(--fg);background:#fff;border-radius:999px;padding:10px 12px;font-weight:600}
+    .prod-actions .btn:hover{background:var(--fg);color:#fff;text-decoration:none}
+
+    .slider-nav{position:relative}
+    .slider-btn{position:absolute;top:42%;transform:translateY(-50%);width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}
+    .slider-btn[disabled]{opacity:.4;cursor:default}
+    .slider-btn.prev{left:6px}
+    .slider-btn.next{right:6px}
+
+    /* PCでは4列固定で横並び（Stitch風） */
+    @media (min-width:1024px){
+      .prod-row{
+        display:grid;
+        grid-auto-flow:initial;
+        grid-template-columns:repeat(4,minmax(220px,1fr));
+        overflow-x:visible;
+        gap:20px;
+        padding-left:0;padding-right:0;
+      }
+      .slider-btn{display:none}
+    }
+
+    /* Footer */
+    .site-footer{border-top:1px solid var(--line);margin-top:60px;padding-top:40px}
+    .footer-links{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+    .footer-col h4{font-size:16px;margin:0 0 12px}
+    .footer-col ul{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+    .footer-bottom{border-top:1px solid var(--line);margin-top:24px;padding-top:16px;text-align:center}
+    .footer-bottom p{margin:0 0 8px}
+    .footer-bottom small{color:var(--muted)}
+
+    /* Responsive */
+    @media (max-width:980px){
+      .hero-grid{grid-template-columns:1fr;gap:16px}
+      .hero h1{font-size:40px}
+      .menu{display:none}
+      .footer-links{grid-template-columns:1fr}
+    }
+    @media (max-width:768px){ .hero{padding:28px 0} }
+    /* ======== RECOMMENDED（おすすめ）専用機能追加 ======== */
+
+/* パラメータ（必要に応じて変更OK） */
+:root{
+  --card-gap: 14px;      /* カードの間隔 */
+  --visible: 4;          /* PCで同時に見せるカード数 */
+  --card-min: 190px;     /* 最小カード幅（モバイル） */
+  --card-max: 230px;     /* 最大カード幅（モバイル） */
+}
+
+/* 通常は横スクロール（スマホ用） */
+.featured .prod-row{
+  grid-auto-columns: minmax(var(--card-min), var(--card-max)) !important;
+  gap: var(--card-gap) !important;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* PCは4枚固定で見せて矢印で送る */
+/* ======== RECOMMENDED（4枚だけ表示してページ送り） ======== */
+@media (min-width:1024px){
+  .featured .prod-row{
+    display: flex !important;
+    overflow: hidden !important;
+    gap: 16px !important;
+    transition: transform 0.5s ease !important;
+  }
+  .featured .prod-card{
+    flex: 0 0 calc(25% - 12px) !important; /* 4枚見せる */
+  }
+  /* 矢印を表示（既存CSSで非表示なので上書き） */
+  .featured .slider-btn{ display:grid !important; }
+}
+/* === 強制的に矢印ボタンを表示 === */
+@media (min-width:1024px){
+  .slider-btn {
+    display: grid !important;
+    position: absolute;
+    top: 42%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--fg);
+    place-items: center;
+    cursor: pointer;
+    z-index: 5;
+  }
+  .slider-btn.prev { left: 6px; }
+  .slider-btn.next { right: 6px; }
+  .slider-btn[disabled] {
+    opacity: .4;
+    cursor: default;
+  }
+}
+/* === RECOMMENDED: 1枚ずつ送る用の表示修正 === */
+@media (min-width:1024px){
+  .featured .slider-nav{
+    position: relative;         /* 既に指定済でもOK */
+    overflow: hidden !important;/* ← マスクは親に持たせる */
+  }
+  .featured .prod-row{
+    /* ここはトラック。自分でマスクしない */
+    overflow: visible !important;
+    display: flex !important;      /* 4枚見せつつ横に並べる */
+    gap: 16px !important;
+    transform: translateX(0);       /* JSがここを動かす */
+    transition: transform .5s ease; /* スライドのアニメ */
+  }
+  .featured .prod-card{
+    flex: 0 0 calc(25% - 12px) !important; /* 常に4枚見せる幅 */
+  }
+  .featured .slider-btn{ display:grid !important; }
+}
+/* ===== Footer Redesign (Five Senses風) ===== */
+.site-footer {
+  background: #0f172a; /* 紺に近いダークネイビー */
+  color: #fff;
+  font-family: "Noto Sans JP", sans-serif;
+  margin-top: 60px;
+}
+
+.footer-top {
+  padding: 60px 0 40px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+.footer-intro h3 {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.footer-line {
+  width: 60px;
+  height: 2px;
+  background: #fff;
+  margin: 12px 0;
+}
+
+.footer-social {
+  display: flex;
+  gap: 12px;
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+.footer-social a {
+  color: #fff;
+  opacity: 0.8;
+  transition: opacity .3s;
+}
+.footer-social a:hover { opacity: 1; }
+
+.footer-copy {
+  font-size: 12px;
+  color: #aaa;
+}
+
+.footer-col h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  padding-bottom: 4px;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: grid;
+  gap: 6px;
+}
+
+.footer-col a {
+  color: #ddd;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color .25s;
+}
+.footer-col a:hover { color: #fff; }
+
+.footer-cert {
+  text-align: center;
+  margin-top: 40px;
+}
+.footer-cert img {
+  height: 64px;
+  width: auto;
+  margin-bottom: 12px;
+}
+.footer-cert p {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.footer-bottom {
+  background: #0d1420;
+  text-align: center;
+  padding: 16px 0;
+}
+.bottom-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+.bottom-links a {
+  color: #ccc;
+  font-size: 13px;
+  text-decoration: none;
+}
+.bottom-links a:hover { color: #fff; }
+.bottom-links .divider { color: #555; }
+
+/* Responsive */
+@media (max-width:900px){
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width:600px){
+  .footer-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .footer-intro { align-items:center; }
+}
+/* ===== Footer color override (fix dark text in footer) ===== */
+.site-footer,
+.site-footer * { color: inherit; } /* まず変な継承をフラットに */
+
+.site-footer{
+  background:#0f172a;           /* 既存の濃紺でOK */
+  color:#e8eef6;                /* フッターの基本文字色を明るく */
+}
+
+/* 見出しは白でくっきり */
+.site-footer .footer-intro h3,
+.site-footer .footer-col h4 { color:#fff; }
+
+/* 段落・箇条書き・スモールなどは少し淡く */
+.site-footer p,
+.site-footer li,
+.site-footer small,
+.site-footer .footer-copy,
+.site-footer .bottom-links a { color:#cfd8e3; }
+
+/* フッター内リンクは “白寄り” に統一、ホバーで強調 */
+.site-footer a { color:#e8eef6; text-decoration:none; }
+.site-footer a:hover { color:#fff; text-decoration:underline; }
+
+/* 電話番号はアクセントで視認性UP */
+.site-footer a[href^="tel:"] { color:#fff(--accent); font-weight:100; }
+.site-footer a[href^="tel:"]:hover { text-decoration:underline; }
+
+/* 区切り線もフッター用に最適化 */
+.site-footer .footer-top{ border-bottom:1px solid rgba(255,255,255,.12); }
+.site-footer .footer-col h4{ border-bottom:1px solid rgba(255,255,255,.2); }
+
+/* フッター下段の背景＆文字コントラスト */
+.site-footer .footer-bottom{ background:#0b1420; }
+.site-footer .bottom-links .divider{ color:#6b7280; }
+
+/* ===== Footer: Address (wb-meta) のレイアウト調整 ===== */
+.footer-intro .wb-meta {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;  /* 縦並び */
+  gap: 4px;                /* 各行の間隔 */
+  font-size: 14px;
+  line-height: 1.6;
+  color: #e2e8f0;
+  white-space: nowrap;     /* ← これで1行内の改行を防止 */
+}
+
+.footer-intro .wb-meta li {
+  display: block;          /* ブロック要素で左揃え */
+  text-indent: -1em;       /* 点の位置を自然に調整（リストマーカー風） */
+  padding-left: 1em;
+}
+
+.footer-intro .wb-meta li a {
+  color:#fff(--accent);
+  text-decoration: none;
+}
+.footer-intro .wb-meta li a:hover {
+  text-decoration: underline;
+}
+
+/* 小画面では折り返してOKにする */
+@media (max-width: 480px){
+  .footer-intro .wb-meta{
+    white-space: normal;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Announcement -->
+  <div class="announce">
+    <div class="container">
+      平日 7:00–19:00 / 土日祝 8:00–18:00 ｜ 神田よりお届けします。オンラインで豆のご購入もどうぞ。
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="container nav">
+      <div class="left-group">
+        <a href="/" class="logo" aria-label="Walkabout Coffee Home">
+          <img src="image.png" alt="Walkabout Coffee Logo">
+        </a>
+        <nav class="menu" aria-label="Primary">
+          <a href="/menu">MENU</a>
+          <a href="https://stitchcoffee.jp/collections/all-products">STORE</a>
+          <a href="/stories">STORIES</a>
+        </nav>
+      </div>
+      <div class="icons">
+        <a class="icon-btn" href="https://maps.app.goo.gl/jFDKTE1eNMnDEYC37" target="_blank" rel="noopener">MAP</a>
+        <a class="icon-btn" href="https://www.instagram.com/_walkabout_coffee/" target="_blank" rel="noopener">INSTAGRAM</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <main class="hero" aria-label="Coffee slides">
+    <div class="container">
+      <div id="fadeWrap" class="fade-wrap">
+        <div class="hero-grid" aria-live="polite">
+          <div class="hero-copy">
+            <div id="hero-eyebrow" class="eyebrow"></div>
+            <h1 id="hero-title">Burundi Bumba LOT-8</h1>
+            <p id="hero-desc">Fruity yet bold, this cup highlights rich chocolate notes with a touch of dark honey sweetness.</p>
+            <div id="coffee-info" class="coffee-info"></div>
+            <a id="hero-cta" class="cta" href="#" target="_blank" rel="noopener">SHOP LIMITED RELEASES</a>
+          </div>
+          <div class="hero-media">
+            <img id="hero-img" src="burundi.webp" alt="Burundi Bumba LOT-8 coffee bag">
+          </div>
+        </div>
+      </div>
+      <div id="dots" class="dots" role="tablist" aria-label="Hero slides"></div>
+    </div>
+    
+  </main>
+
+  <!-- Featured -->
+  <section class="featured">
+    <div class="container">
+      <h2 class="section-title">RECOMMENDED</h2>
+      <div class="slider-nav">
+        <button class="slider-btn prev" aria-label="previous" data-target="#featRow">‹</button>
+        <button class="slider-btn next" aria-label="next" data-target="#featRow">›</button>
+
+        <div id="featRow" class="prod-row" aria-label="Featured products">
+          <article class="prod-card">
+            <a href="/menu#magic">
+              <div class="prod-media"><img src="flatwhite.jpeg" alt="Magic"></div>
+              <div class="prod-body">
+                <div class="prod-title">Magic</div>
+                <div class="price">¥650</div>
+                <div class="prod-actions"><span class="btn">メニューを見る</span></div>
+              </div>
+            </a>
+          </article>
+
+          <article class="prod-card">
+            <a href="/menu#flat-white">
+              <div class="prod-media"><img src="flatwhite.jpeg" alt="Flat White"></div>
+              <div class="prod-body">
+                <div class="prod-title">Flat White</div>
+                <div class="price">¥600</div>
+                <div class="prod-actions"><span class="btn">メニューを見る</span></div>
+              </div>
+            </a>
+          </article>
+
+          <article class="prod-card">
+            <a href="/menu#avocado-toast">
+              <div class="prod-media"><img src="Avo.jpg" alt="Avocado Toast"></div>
+              <div class="prod-body">
+                <div class="prod-title">Avocado Toast</div>
+                <div class="price">850円</div>
+                <div class="prod-actions"><span class="btn">メニューを見る</span></div>
+              </div>
+            </a>
+          </article>
+
+          <article class="prod-card">
+            <a href="/menu#meat-pie">
+              <div class="prod-media"><img src="meatpie.jpeg" alt="Meat Pie"></div>
+              <div class="prod-body">
+                <div class="prod-title">Meat Pie</div>
+                <div class="price">1200円</div>
+                <div class="prod-actions"><span class="btn">メニューを見る</span></div>
+              </div>
+            </a>
+          </article>
+
+          <article class="prod-card">
+            <a href="/menu#salmon-toast">
+              <div class="prod-media"><img src="Avo.jpg" alt="Smoked Salmon Toast"></div>
+              <div class="prod-body">
+                <div class="prod-title">Smoked Salmon Toast</div>
+                <div class="price">850円</div>
+                <div class="prod-actions"><span class="btn">メニューを見る</span></div>
+              </div>
+            </a>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer walkabout-footer">
+  <div class="footer-top">
+    <div class="container footer-grid">
+      <!-- Brand / Intro -->
+      <div class="footer-intro">
+        <a href="/" class="wb-brand">
+          <span class="wb-name">Walkabout Coffee</span>
+        </a>
+        <p class="wb-tag">毎日の一杯に、小さな冒険を。</p>
+        <div class="footer-line"></div>
+       <ul class="wb-meta">
+          <li>〒101-0054 東京都千代田区神田錦町</li>
+          <li>平日 7:00–19:00（L.O 18:30）/ 土日祝 8:00–18:00（L.O 17:30）</li>
+          <li>TEL <a href="tel:0362850007">03-6285-0007</a></li>
+        </ul>
+      </div>
+
+      <!-- Column A -->
+      <div class="footer-col">
+        <h4>Visit Us</h4>
+        <ul>
+          <li><a href="https://maps.app.goo.gl/jFDKTE1eNMnDEYC37" target="_blank" rel="noopener">Access & Map</a></li>
+          <li><a href="/menu">Menu</a></li>
+          <li><a href="https://stitchcoffee.jp/collections/all-products" target="_blank" rel="noopener">Online Store</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+
+      <!-- Column B -->
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="/stories">Stories</a></li>
+          <li><a href="#">Brew Guides</a></li>
+          <li><a href="https://stitch.coffee/" target="_blank" rel="noopener">Partner: Stitch Coffee</a></li>
+        </ul>
+      </div>
+
+      <!-- Column C -->
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="#">Careers (via Instagram DM)</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Brand badges / note -->
+    <div class="container footer-badges">
+      <div class="badge note">
+        <span class="dot"></span>
+        <p>Inspired by Australian café culture — ethically sourced, crafted with intention.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container bottom-links">
+      <small>© 2025 Walkabout Coffee.</small>
+      <span class="divider">|</span>
+      <a href="#">Privacy Policy</a>
+      <span class="divider">|</span>
+      <a href="#">Terms</a>
+      <span class="divider">|</span>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</footer>
+
+
+  <script>
+    // HERO SLIDER
+    const slides = [
+  {
+    story: true,
+    eyebrow: "ABOUT US",
+    title: "毎日の一杯に、<br>小さな冒険を。",
+    desc: "オーストラリアのカフェ文化を日本へ。本場の味わいと雰囲気を、<br>この場所から広げていきます。",
+    lead: "Our Philosophy",
+    img: "Walkabout.jpg",
+    cta: { label: "About us を読む", href: "/about" }
+  },
+  {
+    eyebrow: "LIMITED RELEASE",
+    title: "Burundi Bumba LOT-8",
+    tasting: "Tropical Fruits, Dark Honey & Spiced Chocolate",
+    country: "Burundi",
+    region: "Kayanza",
+    variety: "Red Bourbon & Mibirizi",
+    process: "Natural",
+    altitude: "1,700 m",
+    washingStation: "Ninga",
+    desc: "Fruity yet bold, this cup highlights rich chocolate notes with a touch of dark honey sweetness.",
+    img: "burundi.webp",
+    cta: {
+      label: "SHOP LIMITED RELEASES",
+      href: "https://stitchcoffee.jp/collections/single-origin/products/kenya-gatina-aa-%E3%82%B3%E3%83%94%E3%83%BC"
+    }
+  },
+
+  /* ▼▼▼ ここから新しいスライドを追加 ▼▼▼ */
+  {
+    eyebrow: "LIMITED RELEASE",
+    title: "Kenya Gatina AA",
+    tasting: "Ribena (Blackcurrant), Orange & Pink Lemonade",
+    country: "Kenya",
+    region: "Nyeri, Central Kenya",
+    variety: "Batian, Ruiru 11, SL28, SL34",
+    process: "Fully Washed",
+    altitude: "1,800–2,050 m",
+    washingStation: "Gatina Washing Station",
+    desc: "Juicy blackcurrant with zesty citrus; a bright and clean Kenyan profile.",
+    img: "kenya.webp",
+    cta: {
+      label: "SEE THE LOT",
+      href: "https://stitchcoffee.jp/collections/single-origin/products/ethiopia-mulish-%E3%82%B3%E3%83%94%E3%83%BC"
+    }
+  },
+  {
+    eyebrow: "BLEND",
+    title: "HIGGSS FILD BLEND",
+    tasting: "Milk Chocolate, Berries & Macadamia Nuts",
+    variety: "Colombia / Ethiopia / Brazil",
+    minimal: true,
+    desc: "Balanced and creamy with gentle sweetness and nutty complexity.",
+    img: "higgss.webp",
+    cta: {
+      label: "SHOP BLENDS",
+      href: "https://stitchcoffee.jp/collections/blends/products/higgs-field-blend"
+    }
+  },
+  {
+    eyebrow: "BLEND",
+    title: "BLACK FILD BLEND",
+    tasting: "Dark Chocolate, Caramel & Raw Sugar",
+    variety: "Brazil / Papua New Guinea / Ethiopia",
+    minimal: true,
+    desc: "Rich and bold with syrupy sweetness and a long chocolate finish.",
+    img: "black.webp",
+    cta: {
+      label: "SHOP BLENDS",
+      href: "https://stitchcoffee.jp/collections/blends/products/blackfield-blend"
+    }
+  }
+  /* ▲▲▲ ここまでを追加 ▲▲▲ */
+];
+
+
+    const eyebrowEl = document.getElementById("hero-eyebrow");
+    const titleEl  = document.getElementById("hero-title");
+    const descEl   = document.getElementById("hero-desc");
+    const imgEl    = document.getElementById("hero-img");
+    const ctaEl    = document.getElementById("hero-cta");
+    const infoEl   = document.getElementById("coffee-info");
+    const fadeWrap = document.getElementById("fadeWrap");
+    const hero     = document.querySelector(".hero");
+    const dotsWrap = document.getElementById("dots");
+
+    function buildDots(){
+      dotsWrap.innerHTML = slides.map((_,i)=>(
+        `<button class="dot${i===0?' is-active':''}" role="tab" aria-selected="${i===0?'true':'false'}" data-i="${i}" type="button" aria-label="slide ${i+1}"></button>`
+      )).join("");
+      return Array.from(dotsWrap.querySelectorAll(".dot"));
+    }
+    let dots = buildDots();
+
+    let current = 0, timerId = null;
+    const INTERVAL = 10000;
+
+    function infoHTML(s){
+      if (s.story) return s.lead ? `<p class="tasting"><strong>${s.lead}</strong></p>` : "";
+      const rows = [];
+      if (s.tasting) rows.push(`<p class="tasting"><strong>Tasting Notes:</strong> ${s.tasting}</p>`);
+      const list = [];
+      if (s.country) list.push(`<li><strong>Country:</strong> ${s.country}</li>`);
+      if (s.region) list.push(`<li><strong>Region:</strong> ${s.region}</li>`);
+      if (s.variety) list.push(`<li><strong>Variety:</strong> ${s.variety}</li>`);
+      if (s.process) list.push(`<li><strong>Process:</strong> ${s.process}</li>`);
+      if (s.altitude) list.push(`<li><strong>Altitude:</strong> ${s.altitude}</li>`);
+      if (s.washingStation) list.push(`<li><strong>Washing Station:</strong> ${s.washingStation}</li>`);
+      return rows.join("") + (list.length? `<ul class="origin">${list.join("")}</ul>` : "");
+    }
+
+    function applySlide(i){
+      fadeWrap.classList.add("is-fading");
+      const fadeMs = parseFloat(getComputedStyle(fadeWrap).getPropertyValue('--fade')) || 360;
+      setTimeout(() => {
+        const s = slides[i];
+        eyebrowEl.textContent = s.eyebrow || "";
+        titleEl.innerHTML = s.title;
+        descEl.innerHTML  = s.desc || "";
+        imgEl.src = s.img; imgEl.alt = s.title;
+        ctaEl.textContent = s.cta?.label || "Learn more";
+        ctaEl.href = s.cta?.href || "#";
+        infoEl.innerHTML  = infoHTML(s);
+        dots.forEach((d,idx)=>{ const a = idx===i; d.classList.toggle("is-active",a); d.setAttribute("aria-selected", a?"true":"false"); });
+        current = i;
+        requestAnimationFrame(()=>fadeWrap.classList.remove("is-fading"));
+      }, fadeMs);
+    }
+    function next(){ applySlide((current+1)%slides.length); }
+    function startAuto(){ stopAuto(); timerId=setInterval(next,INTERVAL); }
+    function stopAuto(){ if(timerId) clearInterval(timerId); timerId=null; }
+
+    dotsWrap.addEventListener("click",e=>{ const btn=e.target.closest(".dot"); if(!btn) return; applySlide(+btn.dataset.i); startAuto(); });
+    hero.addEventListener("mouseenter", stopAuto);
+    hero.addEventListener("mouseleave", startAuto);
+    hero.addEventListener("focusin", stopAuto);
+    hero.addEventListener("focusout", startAuto);
+
+    applySlide(0); startAuto();
+// ===== RECOMMENDED スライダー：4枚ページ送り =====
+// ===== RECOMMENDED スライダー：1枚ずつ送る（常に4枚見せる） =====
+(function(){
+  const row  = document.querySelector('.featured #featRow');
+  const prev = document.querySelector('.featured .slider-btn.prev');
+  const next = document.querySelector('.featured .slider-btn.next');
+  if(!row || !prev || !next) return;
+
+  const cards = row.querySelectorAll('.prod-card');
+  const perView = 4; // 同時表示枚数
+  let currentIndex = 0;
+
+  function updateSlider(){
+    const cardWidth = cards[0].getBoundingClientRect().width + 16; // gap含む
+    const maxIndex = cards.length - perView; // 最後の位置
+    currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
+    const offset = cardWidth * currentIndex;
+    row.style.transform = `translateX(-${offset}px)`;
+    prev.disabled = currentIndex === 0;
+    next.disabled = currentIndex >= maxIndex;
+  }
+
+  prev.addEventListener('click', ()=>{
+    currentIndex--;
+    updateSlider();
+  });
+
+  next.addEventListener('click', ()=>{
+    currentIndex++;
+    updateSlider();
+  });
+
+  window.addEventListener('resize', updateSlider);
+  updateSlider();
+})();
+  </script>
+</body>
+</html>
